@@ -5,12 +5,13 @@
 \title{LInear Regression in Astronomy}
 
 \description{
-Performs Bayesian linear regression analysis optimized for astronomy. The method accounts for heteroscedastic and correlated errors in both the independent and the dependent variables, intrinsic scatters (in both variables), time evolution of normalization, slope and scatter, Malmquist and Eddington bias, and break of linearity ('knee'). The posterior distribution of the parameters is sampled with a JAGS (Just Another Gibbs Sampler) powered Gibbs sampler.
+Performs Bayesian linear regression analysis and forecasting optimized for astronomy. The method accounts for heteroscedastic and correlated errors in both the independent and the dependent variables, intrinsic scatters (in both variables) and scatter correlation, time evolution of normalization, slope, scatter, Malmquist and Eddington bias, upper limits and break of linearity ('knee'). The posterior distribution of the parameters is sampled with a JAGS (Just Another Gibbs Sampler) powered Gibbs sampler.
 }
 \usage{
 lira(x, y,
 delta.x, delta.y, covariance.xy,
 y.threshold, delta.y.threshold, x.threshold, delta.x.threshold,
+y.upperlimit, delta.y.upperlimit, x.upperlimit, delta.x.upperlimit,
 z, z.ref=0.01, time.factor="Ez", distance=c("luminosity","angular"),
 Omega.M0=0.3, Omega.L0=0.7,
 alpha.YIZ="dunif", beta.YIZ="dt", gamma.YIZ="dt", delta.YIZ=0.0,
@@ -41,14 +42,18 @@ YZ.monitored=FALSE, export.YZ="")
 %- maybe also "usage" for other objects documented here.
 \arguments{
   \item{x}{the vector containing the observed values "x" of the independent variable.}
-  \item{y}{the vector containing the observed values "y" of the dependent variable.}
+  \item{y}{the vector containing the observed values "y" of the dependent variable. For forecasting, set the missing data values to NA. The posterior distribution of the node will be sampled.}
   \item{delta.x}{optional vector containing the measurement 1-sigma uncertainties in "x".}
   \item{delta.y}{optional vector containing the measurement 1-sigma uncertainties in "y".}
   \item{covariance.xy}{optional vector containing the measurement uncertainties covariances.}
-  \item{y.threshold}{optional vector containing the minimum observable values of "y". These threshold values are used to correct for the Malmquist bias.}
+  \item{y.threshold}{optional vector containing the minimum observable values of "y". These threshold values are used to correct for the Malmquist bias in truncated samples. To be used if undetected objects (y<y.threshold) are entirely missing from the dataset.}
   \item{delta.y.threshold}{optional vector containing the 1-sigma uncertainties in "y.threshold".}
-  \item{x.threshold}{optional vector containing the minimum observable values of "x". These threshold values are used to correct for the Malmquist bias.}
+  \item{x.threshold}{optional vector containing the minimum observable values of "x". See "y.threshold".}
   \item{delta.x.threshold}{optional vector containing the 1-sigma uncertainties in "x.threshold".}
+  \item{y.upperlimit}{optional vector containing the upper limit of "y" for left-censored data points. To be used if the dataset contains the full sample of interest, but some objects have upper limits and others have detections. For detected objects, set the upper limit to NA or to very large values.}
+  \item{delta.y.upperlimit}{optional vector containing the 1-sigma uncertainties in "y.upperlimit".}
+  \item{x.upperlimit}{optional vector containing the upper limit of "x". See "y.upperlimit".}
+  \item{delta.x.upperlimit}{optional vector containing the 1-sigma uncertainties in "x.upperlimit".}
   \item{z}{optional vector containing the measured redshifts.}
   \item{z.ref}{reference redsfhit.}
   \item{time.factor}{character string indicating the form of the "Fz" time factor. "Fz" is renormalized such that Fz=1 at the reference redshift. If "Ez", the evolution is proportional to the Hubble factor; if "1+z", the evolution is proportional to (1+z).}
@@ -183,10 +188,14 @@ lira return a LIST
 \item{second component}{An mcmc.list object containing the MCMC chains of the regression parameters.}
 }
 \references{
-Sereno M., "A Bayesian approach to linear regression in astronomy" (2016), MNRAS 455, 2149-2162; arXiv:1509.05778. Electronic version at \url{http://adsabs.harvard.edu/abs/2016MNRAS.455.2149S}. Preprint also at \url{http://pico.bo.astro.it/~sereno/LIRA/}.
+Sereno M., "A Bayesian approach to linear regression in astronomy" (2016), MNRAS 455, 2149-2162; electronic version at \url{http://adsabs.harvard.edu/abs/2016MNRAS.455.2149S}. 
+
+Sereno M., Ettori S., "CoMaLit-V. Mass forecasting with proxies. Method and application to weak lensing calibrated samples" (2017), MNRAS 468, 3322; electronic version at \url{http://adsabs.harvard.edu/abs/2017MNRAS.468.3322S}.
+
+Preprints at \url{http://pico.oabo.inaf.it/~sereno/LIRA/}.
 }
 \author{
-Mauro Sereno \email{mauro.sereno@unibo.it}
+Mauro Sereno \email{mauro.sereno@oabo.inaf.it}
 }
 
 \note{The vectors x and y can contain missing values NA. The posterior distribution for the corresponding nodes, i.e. the statistical relations, is sampled. Missing values are best suited to the y vector. The samples at the NA locations in the response vector are samples from the posterior predictive distribution and can be summarized just like other model parameters. They can be used to forecast the missing data.}
@@ -198,7 +207,7 @@ See also \code{\link{distance.LCDM}}, \code{\link{Hubble.LCDM}}, \code{\link[rja
 }
 \examples{
 ## EXAMPLE 1
-## sample
+## sample length
 n.sample <- 20
 # intrinsic p(Z) distribution of the independet variable
 mu.Z.0 <- 0.0; sigma.Z.0 <- 1.0;
@@ -206,31 +215,48 @@ Z <- rnorm(n.sample, mean = mu.Z.0, sd = sigma.Z.0)
 # X is unscattered
 X <- Z
 # observational uncertainties in X
-delta.x <- rnorm(n.sample, sd = 0.04)
+delta.x.sd <- 0.04
+delta.x <- rnorm(n.sample, sd = delta.x.sd)
 x <- X + delta.x
 # scaling relation Y-Z
 alpha.YIZ <- 0.0; beta.YIZ <- 1.0; sigma.YIZ.0 <- 0.1;
 # dependent variable
 Y <- alpha.YIZ + beta.YIZ*Z + rnorm(n.sample, sd = sigma.YIZ.0)
 # observational uncertainties in Y
-delta.y <- rnorm(n.sample, sd = 0.05)
+delta.y.sd <- 0.05
+delta.y <- rnorm(n.sample, sd = delta.y.sd)
 y <- Y + delta.y
-data.all <- data.frame(x=x, y=y, delta.x=delta.x, delta.y=delta.y)
+data.all <- data.frame(x=x, y=y, delta.x=delta.x.sd, delta.y=delta.y.sd)
 # regression
-samples <- lira(x, y, delta.x=delta.x, delta.y=delta.y, n.adapt=100,
-n.iter=1000)
+samples <- lira(x, y, delta.x=delta.x, delta.y=delta.y, n.adapt=100, n.iter=1000)
 
 ## EXAMPLE 2
-## Malmquist bias, only objects with y > y.threshold are selected
+## Malmquist bias: only objects with y > y.th are selected.
 y.th <- -0.5
+# the sample is truncated
 data.sel <- data.all[which(data.all$y>y.th),]
 n.sel <- nrow(data.sel)
 # regression
 samples.MB <- lira(data.sel$x, data.sel$y, data.sel$delta.x, data.sel$delta.y, 
-y.threshold = rep(y.th,n.sel), n.adapt=100,
-n.iter=1000, print.summary=FALSE)
+y.threshold = rep(y.th,n.sel), n.adapt=100, n.iter=1000, print.summary=FALSE)
 
-## Further examples can be found at http://pico.bo.astro.it/~sereno/LIRA/.
+## EXAMPLE 3
+## Upper limits: objects with y < y.th are left-censored
+# censoring
+data.ul <- data.all
+index.ul <- which(data.ul$y<y.th)
+data.ul[index.ul,]$y <- NA
+data.ul[index.ul,]$delta.y <- 2
+# upper limits for undetected (detected) objects are set to the threshold value (NA).
+y.upperlimit <- rep(NA, n.sample) 
+y.upperlimit[index.ul] <- y.th
+# the regression recovers the parameters of the scaling relation and 
+# forecasts the Y-values of the censored objects.
+samples.UL <- lira(data.ul$x, data.ul$y, data.ul$delta.x, data.ul$delta.y, 
+y.upperlimit = y.upperlimit, n.adapt=100, n.iter=1000, Y.monitored=TRUE)
+
+
+## Further examples can be found at http://pico.oabo.inaf.it/~sereno/LIRA/.
 }
 % Add one or more standard keywords, see file "KEYWORDS" in the
 % R documentation directory.

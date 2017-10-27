@@ -2,6 +2,7 @@ lira <- function(
 x, y,
 delta.x, delta.y, covariance.xy,
 y.threshold, delta.y.threshold, x.threshold, delta.x.threshold,
+y.upperlimit, delta.y.upperlimit, x.upperlimit, delta.x.upperlimit,
 z, z.ref=0.01, time.factor="Ez", distance=c("luminosity","angular"),
 Omega.M0=0.3, Omega.L0=0.7,
 alpha.YIZ="dunif", beta.YIZ="dt", gamma.YIZ="dt", delta.YIZ=0.0,
@@ -105,12 +106,27 @@ YZ.monitored=FALSE, export.YZ=""){
 	}
 	else {y.threshold.logical <- FALSE}
 	
+	#===== y.upperlimit ==========
+	if(!is.na(match("y.upperlimit",names.arg)) ) {
+		if(length(y.upperlimit)<n.data){stop("y and y.upperlimit of inequal lengths: computation suppressed")}
+		y.upperlimit.logical <- TRUE
+	}
+	else {y.upperlimit.logical <- FALSE}
+	
+	
 	#===== x.threshold ==========
 	if(!is.na(match("x.threshold",names.arg)) ) {
 		if(length(x.threshold)<n.data){stop("x and x.threshold of inequal lengths: computation suppressed")}
 		x.threshold.logical <- TRUE
 	}
 	else {x.threshold.logical <- FALSE}
+	
+	#===== x.upperlimit ==========
+	if(!is.na(match("x.upperlimit",names.arg)) ) {
+		if(length(x.upperlimit)<n.data){stop("x and x.upperlimit of inequal lengths: computation suppressed")}
+		x.upperlimit.logical <- TRUE
+	}
+	else {x.upperlimit.logical <- FALSE}
 	
 	#===== delta.y.threshold ==========
 	if(is.na(match("delta.y.threshold",names.arg))){
@@ -126,6 +142,7 @@ YZ.monitored=FALSE, export.YZ=""){
 		if(length(which(delta.y.threshold==0))){delta.y.threshold.logical <- FALSE}
 	}
 	
+	
 	#===== delta.x.threshold ==========
 	if(is.na(match("delta.x.threshold",names.arg))){
 		delta.x.threshold.logical <- FALSE
@@ -139,6 +156,45 @@ YZ.monitored=FALSE, export.YZ=""){
 		if(!x.threshold.logical){delta.x.threshold.logical <- FALSE; warning("delta.x.threshold cannot be used since x.threshold's are missing")}
 		if(length(which(delta.x.threshold==0))){delta.x.threshold.logical <- FALSE}
 	}
+
+
+	#===== delta.y.upperlimit ==========
+	if(is.na(match("delta.y.upperlimit",names.arg))){
+		delta.y.upperlimit.logical <- FALSE
+	}
+	else{
+		delta.y.upperlimit.logical <- TRUE
+		if(length(delta.y.upperlimit)!=n.data){
+			stop("y and delta.y.upperlimit of inequal lengths: computation suppressed")
+			}
+		else{ifelse(delta.y.upperlimit==0, min(delta.min,delta.y.upperlimit[which(delta.y.upperlimit!=0)]), delta.y.upperlimit)}
+		if(!y.upperlimit.logical){delta.y.upperlimit.logical <- FALSE; warning("delta.y.upperlimit cannot be used since y.upperlimit's are missing")}
+		if(length(which(delta.y.upperlimit==0))){delta.y.upperlimit.logical <- FALSE}
+	}
+	
+	
+	#===== delta.x.upperlimit ==========
+	if(is.na(match("delta.x.upperlimit",names.arg))){
+		delta.x.upperlimit.logical <- FALSE
+	}
+	else{
+		delta.x.upperlimit.logical <- TRUE
+		if(length(delta.x.upperlimit)!=n.data){
+			stop("x and delta.x.upperlimit of inequal lengths: computation suppressed")
+			}
+		else{ifelse(delta.x.upperlimit==0, min(delta.min,delta.x.upperlimit[which(delta.x.upperlimit!=0)]), delta.x.upperlimit)}
+		if(!x.upperlimit.logical){delta.x.upperlimit.logical <- FALSE; warning("delta.x.upperlimit cannot be used since x.upperlimit's are missing")}
+		if(length(which(delta.x.upperlimit==0))){delta.x.upperlimit.logical <- FALSE}
+	}
+
+
+
+	#===== upper limits ==========
+	if(y.upperlimit.logical && length(which(is.na(y.upperlimit)))) {y.upperlimit[which(is.na(y.upperlimit))] <- n.large}
+	if(x.upperlimit.logical && length(which(is.na(x.upperlimit)))) {x.upperlimit[which(is.na(x.upperlimit))] <- n.large}
+
+	if(delta.y.upperlimit.logical && length(which(is.na(delta.y.upperlimit)))) {delta.y.upperlimit[which(is.na(y.upperlimit))] <- n.large}
+	if(delta.x.upperlimit.logical && length(which(is.na(delta.x.upperlimit)))) {delta.x.upperlimit[which(is.na(x.upperlimit))] <- n.large}
 
 
 
@@ -174,18 +230,35 @@ y[i]                 ~  dnorm(Y[i], prec.delta.y[i])                            
 #=
 #=============== Malmquist bias======================
 
-# MB as a step function -- y[i]~dnorm(mean.yIx[i],prec.delta.yIx[i])T(y.min[i],) -- , or MB as 0.5(1-erf(y)) if threshold has uncertainty
-# (if_delta.y!=0) #   # (if_delta.y.threshold=={}) #	y.min[i]  <-  y.threshold[i]	
-# (if_delta.y.threshold!={}) #	                        y.min[i]  ~   dnorm(y.threshold[i],delta.y.threshold[i]^(-2))	
+# MB as a step function -- y[i]~dnorm(mean.yIx[i],prec.delta.yIx[i])T(y.min[i],) -- , or MB as 0.5(1+erf(y)) if threshold has uncertainty
+# (if_delta.y!=0) #   # (if_delta.y.threshold=={}) #	y.min[i]  <- y.threshold[i]	
+# (if_delta.y.threshold!={}) #	                        y.min[i]  ~  dnorm(y.threshold[i],delta.y.threshold[i]^(-2))	
 
 # (if_delta.y!=0) #   # (if_y.threshold!={}) #          Y.min[i]  ~  dnorm(y.min[i],prec.delta.y[i])
 # (if_delta.y==0) #   # (if_y.threshold!={}) #          Y.min[i]  <- y.threshold[i]
 
-# (if_delta.x!=0) #   # (if_delta.x.threshold=={}) #	x.min[i]  <-  x.threshold[i]	
-# (if_delta.x.threshold!={}) #	                        x.min[i]  ~   dnorm(x.threshold[i],delta.x.threshold[i]^(-2))	
+# (if_delta.x!=0) #   # (if_delta.x.threshold=={}) #	x.min[i]  <- x.threshold[i]	
+# (if_delta.x.threshold!={}) #	                        x.min[i]  ~  dnorm(x.threshold[i],delta.x.threshold[i]^(-2))	
 
 # (if_delta.x!=0) #  # (if_sigma.XIZ.0!=0) # # (if_x.threshold!={}) #          X.min[i]  ~  dnorm(x.min[i],prec.delta.x[i])
 # (if_delta.x==0) #  # (if_sigma.XIZ.0!=0) # # (if_x.threshold!={}) #          X.min[i]  <- x.threshold[i]
+
+#=
+#=============== Upper limits======================
+
+# UL as a step function -- y[i]~dnorm(mean.yIx[i],prec.delta.yIx[i])T(,y.max[i]) -- , or UL as 0.5(1-erf(y)) if upper has uncertainty
+# (if_delta.y!=0) #   # (if_delta.y.upperlimit=={}) #	y.max[i]  <-  y.upperlimit[i]	
+# (if_delta.y.upperlimit!={}) #	                        y.max[i]  ~   dnorm(y.upperlimit[i],delta.y.upperlimit[i]^(-2))	
+
+# (if_delta.y!=0) #   # (if_y.upperlimit!={}) #          Y.max[i]  ~  dnorm(y.max[i],prec.delta.y[i])
+# (if_delta.y==0) #   # (if_y.upperlimit!={}) #          Y.max[i]  <- y.upperlimit[i]
+
+# (if_delta.x!=0) #   # (if_delta.x.upperlimit=={}) #	x.max[i]  <-  x.upperlimit[i]	
+# (if_delta.x.upperlimit!={}) #	                        x.max[i]  ~   dnorm(x.upperlimit[i],delta.x.upperlimit[i]^(-2))	
+
+# (if_delta.x!=0) #  # (if_sigma.XIZ.0!=0) # # (if_x.upperlimit!={}) #          X.max[i]  ~  dnorm(x.max[i],prec.delta.x[i])
+# (if_delta.x==0) #  # (if_sigma.XIZ.0!=0) # # (if_x.upperlimit!={}) #          X.max[i]  <- x.upperlimit[i]
+
 
 
 #=
@@ -613,8 +686,8 @@ sigma.Z.0       <- 1.0/sqrt(prec.sigma.Z.0)
    # =========== Mixture =============================================
    if (n.mixture > 1){
    	   data.jags <- c(data.jags,list('n.mixture' = n.mixture,'alpha.dirch' = rep(1.0,n.mixture)))
-   	   if (Z.min!="-n.large"){warning("JAGS distribution dnormmix cannot be truncated. Z.min superseded"); Z.min<-"-n.large"}
-   	   if (Z.max!="n.large"){warning("JAGS distribution dnormmix cannot be truncated. Z.max superseded"); Z.max<-"n.large"}
+ #  	   if (mu.Z.min.0!="-n.large"){warning("JAGS distribution dnormmix cannot be truncated. Z.min superseded"); mu.Z.min.0<-"-n.large"}
+  # 	   if (Z.max!="n.large"){warning("JAGS distribution dnormmix cannot be truncated. Z.max superseded"); Z.max<-"n.large"}
    	   fIfScriptJAGS("(if_n.mixture>1)")
    	   fPriorScriptJAGS("mu.Z.0.mixture[j]", mu.Z.0.mixture)
    	   ParStringJAGSList <- ParStringJAGSList[ParStringJAGSList != "mu.Z.0.mixture[j]"]
@@ -690,6 +763,38 @@ sigma.Z.0       <- 1.0/sqrt(prec.sigma.Z.0)
 		}
 	}     
 
+    
+    # ============== Upper limits =============================================
+	if (y.upperlimit.logical)  {
+		fIfScriptJAGS("(if_y.upperlimit!={})")
+		fAppendScriptJAGS("y[i]","T(,y.max[i])")
+		fAppendScriptJAGS("Y[i]","T(,Y.max[i])")
+		if (!delta.y.upperlimit.logical){
+			data.jags<-c(data.jags,list('y.upperlimit'=y.upperlimit))
+			fIfScriptJAGS("(if_delta.y.upperlimit=={})")
+		}
+		else if (delta.y.upperlimit.logical){
+			data.jags<-c(data.jags,list('y.upperlimit'=y.upperlimit, 'delta.y.upperlimit'=delta.y.upperlimit))
+			fIfScriptJAGS("(if_delta.y.upperlimit!={})")
+		}
+	}     
+    
+    # ============== Upper limits in X ===========================================
+	if (x.upperlimit.logical)  {
+		fIfScriptJAGS("(if_x.upperlimit!={})")
+		fAppendScriptJAGS("x[i]","T(,x.max[i])")
+		if (sigma.XIZ.0 != 0.0){ fAppendScriptJAGS("X[i]","T(,X.max[i])")}
+		if (!delta.x.upperlimit.logical){
+			data.jags<-c(data.jags,list('x.upperlimit'=x.upperlimit))
+			fIfScriptJAGS("(if_delta.x.upperlimit=={})")
+		}
+		else if (delta.x.upperlimit.logical){
+			data.jags<-c(data.jags,list('x.upperlimit'=x.upperlimit, 'delta.x.upperlimit'=delta.x.upperlimit))
+			fIfScriptJAGS("(if_delta.x.upperlimit!={})")
+		}
+	} 
+	
+	
     
     #==================== export JAGS Script============================
     ScriptJAGS[1,4]<-paste0("created with lira on ",date(),sep="")
