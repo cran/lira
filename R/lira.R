@@ -709,8 +709,14 @@ sigma.Z.0       <- 1.0/sqrt(prec.sigma.Z.0)
 	mcmc.all$"gamma.sigma.Z.min.D" <- 0.0
 	mcmc.all$"gamma.sigma.Z.min.Fz" <- 0.0
 		
-	if (mu.Z.min.0 != "-n.large" || Z.max != "n.large") {
+	if (mu.Z.min.0 != "-n.large" && Z.max != "n.large") {
 		fAppendScriptJAGS("Z[i]",paste0("T( Z.min.z[i], ", toString(Z.max), ")"))
+		}
+	if (mu.Z.min.0 != "-n.large" && Z.max == "n.large") {
+		fAppendScriptJAGS("Z[i]",paste0("T( Z.min.z[i], ", ")"))
+		}
+	if (mu.Z.min.0 == "-n.large" && Z.max != "n.large") {
+		fAppendScriptJAGS("Z[i]",paste0("T( , ", toString(Z.max), ")"))
 		}
 			
 	if (mu.Z.min.0 != "-n.large") {

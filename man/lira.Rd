@@ -55,51 +55,51 @@ YZ.monitored=FALSE, export.YZ="")
   \item{x.upperlimit}{optional vector containing the upper limit of "x". See "y.upperlimit".}
   \item{delta.x.upperlimit}{optional vector containing the 1-sigma uncertainties in "x.upperlimit".}
   \item{z}{optional vector containing the measured redshifts.}
-  \item{z.ref}{reference redsfhit.}
-  \item{time.factor}{character string indicating the form of the "Fz" time factor. "Fz" is renormalized such that Fz=1 at the reference redshift. If "Ez", the evolution is proportional to the Hubble factor; if "1+z", the evolution is proportional to (1+z).}
-  \item{distance}{character string denoting the cosmological distances to use. If "luminosity" or "angular", angular diameter or luminosity distances are considered, respectively.}
+  \item{z.ref}{reference redshift.}
+  \item{time.factor}{character string indicating the form of the "Fz" time factor. "Fz" is renormalized such that Fz=1 at the reference redshift z.ref. If time.factor="Ez", the evolution is proportional to the Hubble factor; if "1+z", the evolution is proportional to (1+z).}
+  \item{distance}{character string denoting the cosmological distances to use. If distance="luminosity" or "angular", luminosity or angular diameter distances are considered, respectively.}
   \item{Omega.M0}{present day matter density in units of the critical density in a LCDM universe. This is used to compute the distances and the time factor "Ez", if applicable.}
   \item{Omega.L0}{renormalized cosmological constant in units of the critical density. See "Omega.M0".}
   \item{alpha.YIZ}{a character string or a number giving the prior on the intercept of the Y-Z regression. By default, a uniform distribution is assumed. See Details.}
   \item{beta.YIZ}{a character string or a number giving the prior on the slope of the Y-Z relation. By default, a Student's t-distribution is assumed. See Details.}
   \item{gamma.YIZ}{a character string or a number giving the prior on slope of the time evolution of the Y-Z relation. If redshifts are provided, a default Student's t-distribution is assumed. Otherwise, the parameter is set to 0. See Details.}
   \item{delta.YIZ}{a character string or a number giving the prior on the slope tilt with time of the Y-Z relation. By default, this parameter is set to 0. See Details.}
-  \item{sigma.YIZ.0}{a character string or a number giving the prior on the standard deviation of the intrinsic scatter of the Y-Z relation at "z.ref". By default, the precision, i.e., sigma.YIZ.0^-2, is assumed to follow a Gamma distribution. See Details.}
+  \item{sigma.YIZ.0}{a character string or a number giving the prior on the standard deviation of the intrinsic scatter of the Y-Z relation at z.ref. By default, the precision, i.e., sigma.YIZ.0^-2, is assumed to follow a Gamma distribution. See Details.}
   \item{gamma.sigma.YIZ.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the scatter sigma.YIZ. See Details. By default, this parameter is set to 0. See Details.}
-  \item{gamma.sigma.YIZ.D}{a character string or a number giving the prior on the evolution with the distance "D" of  the scatter sigma.YIZ. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
+  \item{gamma.sigma.YIZ.D}{a character string or a number giving the prior on the evolution with the distance "D" of the scatter sigma.YIZ. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
   \item{alpha.XIZ}{a character string or a number giving the prior on the intercept of the X-Z relation. By default, this parameter is set to 0. See Details.}
   \item{beta.XIZ}{a character string or a number giving the prior on the slope of the X-Z relation. By default, this parameter is fixed to 1. See Details.}
   \item{gamma.XIZ}{a character string or a number giving the prior on the slope of the time evolution of the X-Z relation. By default, this parameter is set to 0. See Details.}
   \item{delta.XIZ}{a character string or a number giving the prior on the slope tilt with time of the X-Z relation. By default, this parameter is set to 0. See Details.}
-  \item{sigma.XIZ.0}{a character string or a number giving the prior on the standard deviation of the intrinsic scatter of the X-Z relation at "z.ref". By default, this parameter is set to 0. See Details.}
-  \item{gamma.sigma.XIZ.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the scatter sigma.XIZ. By default, this parameter is either set to 0. See Details.}
+  \item{sigma.XIZ.0}{a character string or a number giving the prior on the standard deviation of the intrinsic scatter of the X-Z relation at z.ref. By default, this parameter is set to 0. See Details.}
+  \item{gamma.sigma.XIZ.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the scatter sigma.XIZ. By default, this parameter is set to 0. See Details.}
   \item{gamma.sigma.XIZ.D}{a character string or a number giving the prior on the evolution with the distance "D" of the scatter sigma.XIZ. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
-  \item{rho.XYIZ.0}{a character string or a number giving the prior on the correlation between the intrinsic scatters at "z.ref". By default, this parameter is set to 0. See Details.}
+  \item{rho.XYIZ.0}{a character string or a number giving the prior on the correlation between the intrinsic scatters at z.ref. By default, this parameter is set to 0. See Details.}
   \item{gamma.rho.XYIZ.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the scatter-correlation rho.XYIZ. By default, this parameter is set to 0. See Details.}
   \item{gamma.rho.XYIZ.D}{a character string or a number giving the prior on the evolution with the distance "D" of the scatter-correlation rho.XYIZ. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
-  \item{n.mixture}{the number of Gaussian distributions in the mixture modeling the Z-distribution p(Z). See Details.}
-  \item{pi}{the prior on the probability coefficients of the mixture components. By default a Dirichelet distribution is assumed. See Details.}
-  \item{mu.Z.0}{a character string or a number giving the prior on the mean of the first mixture component at "z.ref". By default, a uniform distribution is assumed. See Details.}
+  \item{n.mixture}{the number of Gaussian distributions in the mixture modelling the Z-distribution p(Z). See Details.}
+  \item{pi}{the prior on the probability coefficients of the mixture components. By default, a Dirichelet distribution is assumed. See Details.}
+  \item{mu.Z.0}{a character string or a number giving the prior on the mean of the first mixture component at z.ref. By default, a uniform distribution is assumed. See Details.}
   \item{gamma.mu.Z.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the mean mu.Z. By default, a Student's t-distribution is assumed. See Details.}
   \item{gamma.mu.Z.D}{a character string or a number giving the prior on the evolution with the distance "D" of the mean mu.Z. By default, a Student's t-distribution is assumed. See Details.}
-  \item{sigma.Z.0}{a character string or a number giving the prior on the dispersion of the first mixture component at "z.ref". By default, the precision follows a priori a Gamma distribution. See Details.}
+  \item{sigma.Z.0}{a character string or a number giving the prior on the dispersion of the first mixture component at z.ref. By default, the precision follows a priori a Gamma distribution. See Details.}
   \item{gamma.sigma.Z.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the dispersion sigma.Z. By default, this parameter is set to 0. See Details.}
-  \item{gamma.sigma.Z.D}{a character string or a number giving the prior on the volution with the distance "D" of the dispersion sigma.Z. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
-   \item{mu.Z.0.mixture}{a character string or a number giving the prior on the mean of the additional mixture components at "z.ref". By default, a uniform distribution is assumed. See Details.}
-  \item{sigma.Z.0.mixture}{a character string or a number giving the prior on the dispersion of the additional mixture components at "z.ref". By default, the precisions follow a priori a Gamma distribution. See Details.}
+  \item{gamma.sigma.Z.D}{a character string or a number giving the prior on the evolution with the distance "D" of the dispersion sigma.Z. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
+   \item{mu.Z.0.mixture}{a character string or a number giving the prior on the mean of the additional mixture components at z.ref. By default, a uniform distribution is assumed. See Details.}
+  \item{sigma.Z.0.mixture}{a character string or a number giving the prior on the dispersion of the additional mixture components at z.ref. By default, the precisions follow a priori a Gamma distribution. See Details.}
   \item{Z.knee}{a character string or a number giving the prior on the Z value where linearity breaks down. If applicable, the default prior is the uniform distribution. See Details.}
   \item{l.knee}{a character string or a number giving the prior on the width of the transition region where linearity breaks down. By default, a delta prior is assumed. See Details.}
   \item{beta.YIZ.knee}{a character string or a number giving the prior on the slope of the Y-Z relation before the break. If beta.YIZ.knee="beta.YIZ", no breaking occurs. See Details.}
   \item{delta.YIZ.knee}{a character string or a number giving the prior on the time evolution of the slope of the Y-Z relation before the break. If delta.YIZ.knee="delta.YIZ", the tilt does not change before the break. See Details.}
   \item{sigma.YIZ.0.knee}{a character string or a number giving the prior on the intercept of the Y-Z relation before the break. If sigma.YIZ.0.knee="sigma.0.YIZ", the intrinsic scatter does not change before the break. See Details.}
-  \item{mu.Z.min.0}{minimum value of the Z distribution at "z.ref". The Gaussian ditribution of the covariate is trunceted below "mu.Z.Min.0". If "n.mixture">1, "mu.Z.Min.0" is automatically set to -n.large.}
+  \item{mu.Z.min.0}{minimum value of the Z distribution at z.ref. The Gaussian distribution of the covariate is truncated below "mu.Z.Min.0". If "n.mixture">1, "mu.Z.Min.0" is automatically set to -n.large. If "mu.Z.Min.0" is set to -n.large, the Gaussian is not truncated.}
   \item{gamma.mu.Z.min.Fz}{a character string or a number giving the prior on the evolution with "Fz" of mu.Z.min. By default, a Student's t-distribution is assumed. See Details.}
   \item{gamma.mu.Z.min.D}{a character string or a number giving the prior on the evolution with the distance "D" of the mean mu.Z.min. By default, a Student's t-distribution is assumed. See Details.}
-  \item{sigma.Z.min.0}{a character string or a number giving the prior on the dispersion of the truncation "mu.Z.min.0" at "z.ref". By default, "sigma.Z.min.0" is set to 0.0 and the covariate distribution is sharply truncated. If "sigma.Z.min.0" is left free, the truncation is modeled with a complementary error function with dispersion "sigma.Z.min.0". See Details.}
+  \item{sigma.Z.min.0}{a character string or a number giving the prior on the dispersion of the truncation "mu.Z.min.0" at z.ref. By default, "sigma.Z.min.0" is set to 0.0 and the covariate distribution is sharply truncated. If "sigma.Z.min.0" is left free, the truncation is modelled with a complementary error function with dispersion "sigma.Z.min.0". See Details.}
   \item{gamma.sigma.Z.min.Fz}{a character string or a number giving the prior on the evolution with "Fz" of the dispersion sigma.Z.min. By default, this parameter is set to 0. See Details.}
-  \item{gamma.sigma.Z.min.D}{a character string or a number giving the prior on the volution with the distance "D" of the dispersion sigma.Z.min. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
-  \item{Z.max}{maximum value of the Z distribution. The Gaussian ditribution and the prior on "mu.Z.0" are trunceted above Z.max. If "n.mixture">1, Z.max is automatically set to n.large.}
-  \item{n.large}{large number used to define standard prior distributions. abs(x) have to be much smaller than n.large} 
+  \item{gamma.sigma.Z.min.D}{a character string or a number giving the prior on the evolution with the distance "D" of the dispersion sigma.Z.min. By default, a delta prior is assumed and the parameter is set to 0. See Details.}
+  \item{Z.max}{maximum value of the Z distribution. The Gaussian distribution of Z values is truncated for Z > Z.max. If Z.max=n.large, the distribution is not truncated. If "n.mixture">1, Z.max is automatically set to n.large.}
+  \item{n.large}{large number used to define standard prior distributions. n.large has to be much larger than max(abs(x)).} 
   \item{inits}{optional specification of initial values in the form of a list or a function. See \code{\link[rjags]{jags.model}} for details.} 
   \item{n.chains}{the number of parallel chains for the model. See \code{\link[rjags]{jags.model}} for details.}
   \item{n.adapt}{the number of iterations for adaptation. See \code{\link[rjags]{jags.model}} for details.}
@@ -111,15 +111,15 @@ YZ.monitored=FALSE, export.YZ="")
   \item{export}{logical value. If TRUE two output files are written, one text file with the merged thinned chains and one text file with the JAGS script used to perform the regression.}
   \item{export.mcmc}{character string indicating the file name where to write the chains. If "" and export=TRUE, a file named "mcmc_all.dat" is created in the working directory.}
   \item{export.jags}{character string indicating the file name where to write the JAGS model. If "" and export=TRUE, a file named "lira.jags" is created in the working directory.}
-  \item{X.monitored}{logical value. If TRUE the X varaibles are monitored.}
+  \item{X.monitored}{logical value. If TRUE the X variables are monitored.}
   \item{export.X}{character string indicating the file name where to write the chains for the X variables. If "", there is no export.}
-  \item{XZ.monitored}{logical value. If TRUE the XZ varaibles are monitored.}
+  \item{XZ.monitored}{logical value. If TRUE the XZ variables are monitored.}
   \item{export.XZ}{character string indicating the file name where to write the chains for the XZ variables. If "", there is no export.}
-  \item{Z.monitored}{logical value. If TRUE the Z varaibles are monitored.}
+  \item{Z.monitored}{logical value. If TRUE the Z variables are monitored.}
   \item{export.Z}{character string indicating the file name where to write the chains for the Z variables. If "", there is no export.}
-  \item{Y.monitored}{logical value. If TRUE the Y varaibles are monitored.}
+  \item{Y.monitored}{logical value. If TRUE the Y variables are monitored.}
   \item{export.Y}{character string indicating the file name where to write the chains for the Y variables. If "", there is no export.}
-  \item{YZ.monitored}{logical value. If TRUE the YZ varaibles are monitored.}
+  \item{YZ.monitored}{logical value. If TRUE the YZ variables are monitored.}
   \item{export.YZ}{character string indicating the file name where to write the chains for the YZ variables. If "", there is no export.}
 }
 
@@ -162,9 +162,9 @@ mu.Z.min = mu.Z.min.0 + gamma.mu.Z.min.D*log10(D) + gamma.mu.Z.min.Fz*T,
 
 and with dispersion
 
-sigma.Z.min = sigma.Z.min.0*(Fz^gamma.sigma.Z.min.Fz)*(D^gamma.sigma.Z.min.D).
+sigma.Z.min = sigma.Z.min.0*(Fz^gamma.sigma.Z.min.Fz)*(D^gamma.sigma.Z.min.D). By default, the distribution is not truncated.
 
-At the high values end, the distribution can be truncated with an hard cut at Z.max.
+At the high values end, the distribution can be truncated with an hard cut at Z.max. By default, the distribution is not truncated.
 
 Breaking of the linearity is allowed too. At Z.knee, the linear relation abruptly changes to
 
